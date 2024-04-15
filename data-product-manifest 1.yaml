@@ -1,0 +1,161 @@
+version: 0.0.6
+jobId: "56"
+jobName: POS Transactions
+jobType: Source Aligned Data Product
+alias: Load_all_pos_transactions_data
+discoveryPort:
+  name: POS Transactions
+inputPorts:
+  - alias: POS_Sales_Transactions_1
+    isDynamic: true
+    path: s3://bp-spark-sql-library-test-acc/order_details/
+    optional:
+      persistDataFrame: false
+      advanceOptions:
+        mergeSchema: true
+      enableDataReconciliation: false
+      enforceSchema: false
+      connection: POS
+      dataSetUrn: urn:dv:dataset:52e0a68b-5935-4278-b31e-422a52de9ca0
+    type: inputParquet
+productState:
+  isDynamic: true
+  alias: Load_all_pos_transactions_data
+  retentionVersions: ""
+  logicalSchema:
+    properties:
+      DATE:
+        type: DATETIME
+        description: Date of record
+      HOUR:
+        type: STRING
+        description: Hour of record
+      ORDER_ID:
+        type: STRING
+        description: ID of the order
+      ORDER_NO:
+        type: STRING
+        description: Alphanumeric Order number
+      CUSTOMER_ID:
+        type: STRING
+        description: Customer ID
+      ADDRESS_TYPE:
+        type: STRING
+        description: Type of address
+      ORDER_TYPE:
+        type: STRING
+        description: Type of order
+      PAYMENT_MODE:
+        type: STRING
+        description: Mode of payment
+      ORDER_MODE:
+        type: STRING
+        description: Mode of order
+      ORDERED_ITEMS:
+        type: STRING
+        description: Distinct list of ordered items
+      COST:
+        type: STRING
+        description: Cost of the item
+      ITEMS_QUANTITY:
+        type: STRING
+        description: Quantity of items
+      ITEM_TYPE:
+        type: STRING
+        description: Type of item
+      PROMO_CODE:
+        type: STRING
+        description: Promo code used if any
+      DELIVERY_RATING:
+        type: STRING
+        description: Delivery rating
+      STORE:
+        type: STRING
+        description: Store location
+      CITY:
+        type: STRING
+        description: City of the store
+      STATE:
+        type: STRING
+        description: State of the store
+      ADJ_STORE:
+        type: STRING
+        description: Adjacent store name
+      ADJ_STORE_CNT:
+        type: STRING
+        description: Adjacent store count
+      ADJ_STORES:
+        type: STRING
+        description: Count of adjacent stores
+      NUMBER_OF_MEALS:
+        type: STRING
+        description: Number of meals in order
+      NUMBER_OF_LIQUIDS:
+        type: STRING
+        description: Number of liquid items in order
+      NUMBER_OF_SOLIDS:
+        type: STRING
+        description: Number of solid items in the order
+      FAMILY_SIZE:
+        type: STRING
+        description: Family size of order
+      CUSTOMER_TYPE:
+        type: STRING
+        description: Type of customer
+      WEEKDAY:
+        type: STRING
+        description: Weekday flag
+      CSAT:
+        type: STRING
+        description: ""
+      LDO:
+        type: STRING
+        description: ""
+      FAMILY_SIZE_GROUP:
+        type: STRING
+        description: ""
+      ITEMS_QUANTITY_GROUP:
+        type: STRING
+        description: ""
+  stateStoreType: loadDataIceberg
+  isProfilingEnabled: true
+  updateStrategy: Overwrite
+  tableName: sale.pos_transactions
+  warehousePath: s3://dataverse-sale/SADP/
+  catalogName: sale
+  optional:
+    persistDataFrame: false
+    enableDataReconciliation: false
+    enforceSchema: true
+    enforceSchemaMethod: Warning
+    catalogType: glue
+  refreshInterval: 0 1 * * *
+transformation:
+  - alias: Spark_SQL_1
+    type: SQL
+    description: Load all data
+    query: select * from df
+    sequenceNo: 2
+    references:
+      - alias: POS_Sales_Transactions_1
+        sqlReference: df
+controlPort:
+  dataQualityRules:
+    NullValueCheck:
+      productState:
+        checks:
+          - column: order_id
+            expression: ==
+            number: 1
+        referenceAlias: Load_all_pos_transactions_data
+    UniquenessCheck:
+      productState:
+        checks:
+          - column: order_id
+        referenceAlias: Load_all_pos_transactions_data
+outputPort:
+  subscriptionChannels:
+    - channelType: Postgres
+      queryType: SQL
+    - channelType: Dataproduct
+      queryType: SQL
