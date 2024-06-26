@@ -2,9 +2,9 @@ version: 0.0.6
 jobId: "56"
 jobName: POS Transactions
 jobType: Source Aligned Data Product
-alias: Load_all_pos_transactions_data
+alias: Point_of_sale_transactions_data
 discoveryPort:
-  name: POS Transactions
+  name: Point of Sale Transactions
   shortDescription: POS
 inputPorts:
   - alias: POS_Sales_Transactions_1
