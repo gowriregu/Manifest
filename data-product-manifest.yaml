@@ -5,6 +5,7 @@ jobType: Source Aligned Data Product
 alias: Load_all_pos_transactions_data
 discoveryPort:
   name: POS Transactions
+  shortDescription: POS
 inputPorts:
   - alias: POS_Sales_Transactions_1
     isDynamic: true
